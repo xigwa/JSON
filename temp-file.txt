@@ -1,0 +1,4 @@
+{"name":"да","age":30,"birthDate":"1994-08-15","email":"john.doe@example.com"}
+{"name":"Vlad","age":16,"birthDate":"2008-03-12","email":"bonya377@gmail.com","phoneNumber":"723344223"}
+{"name":"Vlad","age":16,"birthDate":"2008-03-12","email":"bonya377@gmail.com","phoneNumber":"723344223"}
+{"name":"Vlad","age":16,"birthDate":"2008-03-12","email":"bonya377@gmail.com","phoneNumber":"723344223"}
