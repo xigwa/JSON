@@ -78,7 +78,7 @@ public class Bot extends TelegramLongPollingBot {
                     sendText(chatID, "Не вдалося обробити ваші дані. Переконайтеся, що він має правильний формат.");
                 }
             } else if (getText.equals("/all")) listAllNames(chatID);
-              else if (getText.startsWith("/delete ")) {
+            else if (getText.startsWith("/delete ")) {
                 String name = getText.substring(8).trim();
                 promptDeleteConfirmation(chatID, name);
             } else if (deletionRequests.containsKey(chatID)) {
@@ -90,6 +90,7 @@ public class Bot extends TelegramLongPollingBot {
                 sendText(chatID, "Невідома команда. Використовуйте /view, /save, /all, або /delete.");
         }
     }
+
     private void promptDeleteConfirmation(Long chatID, String name) {
         sendText(chatID, "Ви дійсно хочете видалити " + name + "? Дайте відповідь «так» для підтвердження або «ні» для скасування.");
         deletionRequests.put(chatID, name);
@@ -118,7 +119,7 @@ public class Bot extends TelegramLongPollingBot {
             String line;
             while ((line = reader.readLine()) != null) {
                 Person person = gson.fromJson(line, Person.class);
-                if (!person.getName().equalsIgnoreCase(nameToDelete)) {
+                if (person != null && !person.getName().equalsIgnoreCase(nameToDelete)) {
                     writer.write(line);
                     writer.newLine();
                 }
@@ -138,7 +139,7 @@ public class Bot extends TelegramLongPollingBot {
             boolean found = false;
             while ((line = reader.readLine()) != null) {
                 Person person = gson.fromJson(line, Person.class);
-                if (person.getName().equalsIgnoreCase(name)) {
+                if (person != null && person.getName().equalsIgnoreCase(name)) {
                     String info = String.format("Name: %s\nAge: %d\nBirth Date: %s\nEmail: %s\nPhone Number: %s",
                             person.getName(), person.getAge(), person.getBirthDate(), person.getEmail(), person.getPhoneNumber());
                     sendText(chatID, info);
@@ -153,12 +154,13 @@ public class Bot extends TelegramLongPollingBot {
             sendText(chatID, "Під час отримання даних сталася помилка.");
         }
     }
+
     private boolean isNameUnique(String name) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Person person = gson.fromJson(line, Person.class);
-                if (person.getName().equalsIgnoreCase(name))
+                if (person != null && person.getName().equalsIgnoreCase(name))
                     return false;
             }
         }
@@ -171,7 +173,9 @@ public class Bot extends TelegramLongPollingBot {
             StringBuilder namesList = new StringBuilder("Список імен:\n");
             while ((line = reader.readLine()) != null) {
                 Person person = gson.fromJson(line, Person.class);
-                namesList.append(person.getName()).append("\n");
+                if (person != null) {
+                    namesList.append(person.getName()).append("\n");
+                }
             }
             sendText(chatID, namesList.toString());
         } catch (IOException e) {
@@ -207,6 +211,7 @@ public class Bot extends TelegramLongPollingBot {
             writer.newLine();
         }
     }
+
     public void sendText(Long who, String what) {
         SendMessage sm = SendMessage.builder()
                 .chatId(who.toString())
